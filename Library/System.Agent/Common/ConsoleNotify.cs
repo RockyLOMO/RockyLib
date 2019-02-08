@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Drawing;
@@ -96,65 +95,6 @@ namespace System.Agent
             Console.Out.WriteLine(shortcutPath);
             return shortcutPath;
         }
-
-        /// <summary>
-        /// 获取客户端发布版本号
-        /// </summary>
-        /// <returns>当前版本号</returns>
-        public static string GetVersion()
-        {
-            var version = string.Empty;
-            if (!ApplicationDeployment.IsNetworkDeployed)
-            {
-                return version;
-            }
-            var ad = ApplicationDeployment.CurrentDeployment;
-            UpdateCheckInfo info = null;
-            try
-            {
-                info = ad.CheckForDetailedUpdate();
-            }
-            catch (DeploymentDownloadException dde)
-            {
-                Console.Out.WriteWarning("The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
-                return version;
-            }
-            catch (InvalidDeploymentException ide)
-            {
-                Console.Out.WriteWarning("Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
-                return version;
-            }
-            catch (InvalidOperationException ioe)
-            {
-                Console.Out.WriteWarning("This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
-                return version;
-            }
-
-            if (info.UpdateAvailable)
-            {
-                if (info.IsUpdateRequired)
-                {
-                    // Display a message that the app MUST reboot. Display the minimum required version.
-                    Console.Out.WriteWarning("This application has detected a mandatory update from your current " +
-                        "version to version " + info.MinimumRequiredVersion.ToString() +
-                        ". The application will now install the update and restart.");
-                }
-                try
-                {
-                    ad.Update();
-                    Console.Out.WriteWarning("The application has been upgraded, and will now restart.");
-                    Application.Restart();
-                }
-                catch (DeploymentDownloadException dde)
-                {
-                    Console.Out.WriteWarning("Cannot install the latest version of the application. \n\nPlease check your network connection, or try again later. Error: " + dde);
-                    return version;
-                }
-            }
-            var ver = ad.CurrentVersion;
-            version = string.Format("v{0}.{1}.{2}.{3}", ver.Major, ver.Minor, ver.Build, ver.Revision);
-            return version;
-        }
         #endregion
 
         #region Fields
@@ -235,7 +175,6 @@ namespace System.Agent
             this.CreateMenuItem("日志", "L");
             this.CreateMenuItem("我的设备", "D");
             this.CreateMenuItem("启动Proxifier", "P");
-            this.CreateMenuItem("安装隐私服务", "PS");
             this.CreateMenuItem("帮助", "H", true);
             this.CreateMenuItem("开机启动/禁止", "S");
             this.CreateMenuItem("显示/隐藏", "V");
@@ -266,14 +205,6 @@ namespace System.Agent
                     {
                         pipeClient.Connect();
                         pipeClient.WriteByte(1);
-                        pipeClient.WaitForPipeDrain();
-                    }
-                    break;
-                case "PS":
-                    using (var pipeClient = new NamedPipeClientStream(SecurityPolicy.PipeName))
-                    {
-                        pipeClient.Connect();
-                        pipeClient.WriteByte(2);
                         pipeClient.WaitForPipeDrain();
                     }
                     break;

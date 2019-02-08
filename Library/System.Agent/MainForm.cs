@@ -133,9 +133,6 @@ namespace System.Agent
                         case 1:
                             this.RunProxifier();
                             break;
-                        case 2:
-                            this.RunPrivacyService();
-                            break;
                     }
                 }
                 catch (Exception ex)
@@ -159,7 +156,7 @@ namespace System.Agent
             _deviceIdentitys = AgentApp.Instance.GetDeviceIdentity().ToArray();
             lb_user.Items.Clear();
             lb_user.Items.Add("-我的设备-");
-            for (int i = 0; i < _deviceIdentitys.Length; )
+            for (int i = 0; i < _deviceIdentitys.Length;)
             {
                 var device = _deviceIdentitys[i];
                 int j = device.Item1.IndexOf(@"\");
@@ -306,53 +303,6 @@ namespace System.Agent
             //    _proxifierProc = Process.Start(exePath);
             //}
             //ConsoleNotify.ShowWindow(_proxifierProc.MainWindowHandle, true);
-        }
-
-        private void RunPrivacyService()
-        {
-            //lock (_pipeServer)
-            //{
-            //    string destPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Privacy Service\");
-            //    App.CreateDirectory(destPath);
-            //    string zipPath = Path.Combine(destPath, "PrivacyService.7z");
-
-            //    var client = new HttpClient(new Uri("http://azure.xineapp.com/xAgent/PrivacyService.7z"));
-            //    client.DownloadFile(zipPath);
-
-            //    try
-            //    {
-            //        var sc = new System.ServiceProcess.ServiceController("PrivacyService");
-            //        if (sc.Status != System.ServiceProcess.ServiceControllerStatus.Stopped)
-            //        {
-            //            sc.Stop();
-            //        }
-            //    }
-            //    catch (InvalidOperationException ex)
-            //    {
-            //        App.LogError(ex, "SvcStop");
-            //    }
-            //    //先停止否则无法覆盖
-            //    var archive = ArchiveFactory.Open(zipPath);
-            //    foreach (var entry in archive.Entries)
-            //    {
-            //        entry.WriteToDirectory(destPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
-            //    }
-            //    System.Agent.Privacy.ProtocolClient.LockExe();
-
-            //    var proc = new Process();
-            //    proc.StartInfo.FileName = "cmd.exe";
-            //    proc.StartInfo.UseShellExecute = false;
-            //    proc.StartInfo.RedirectStandardInput = true;
-            //    proc.StartInfo.RedirectStandardOutput = true;
-            //    proc.StartInfo.RedirectStandardError = true;
-            //    //proc.StartInfo.CreateNoWindow = true;
-            //    proc.StartInfo.WorkingDirectory = @"C:\Windows\Microsoft.NET\Framework\v4.0.30319\";
-            //    proc.Start();
-            //    proc.StandardInput.WriteLine(string.Format(@"InstallUtil.exe /u ""{0}System.Agent.WinService.exe""", destPath));
-            //    proc.StandardInput.WriteLine(string.Format(@"InstallUtil.exe ""{0}System.Agent.WinService.exe""", destPath));
-            //    proc.StandardInput.WriteLine("exit");
-            //    //proc.WaitForExit();
-            //}
         }
         #endregion
     }

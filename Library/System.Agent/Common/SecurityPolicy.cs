@@ -10,32 +10,6 @@ namespace System.Agent
     {
         internal static readonly string PipeName = Guid.NewGuid().ToString("N");
 
-        internal static void Check()
-        {
-            var evi = new System.Security.Policy.Evidence();
-            evi.AddHostEvidence(new System.Security.Policy.Zone(System.Security.SecurityZone.Intranet));
-            var ps = new System.Security.PermissionSet(System.Security.Permissions.PermissionState.None);
-            ps.AddPermission(new System.Security.Permissions.SecurityPermission(System.Security.Permissions.SecurityPermissionFlag.Assertion | System.Security.Permissions.SecurityPermissionFlag.Execution | System.Security.Permissions.SecurityPermissionFlag.BindingRedirects));
-            ps.AddPermission(new System.Security.Permissions.FileIOPermission(System.Security.Permissions.PermissionState.Unrestricted));
-            var domainSetup = new AppDomainSetup();
-            domainSetup.ApplicationBase = Environment.CurrentDirectory;
-            var domain = AppDomain.CreateDomain("CrackCheck", evi, domainSetup, ps, null);
-            try
-            {
-                string crackCheck = (string)domain.CreateInstanceFromAndUnwrap(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, typeof(string).FullName);
-                AppDomain.Unload(domain);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Equals("8013141a", StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.Out.WriteError("对本应用的校验不合法，请从官方重新安装应用。");
-                    System.Threading.Thread.Sleep(6000);
-                    Environment.Exit(0);
-                }
-            }
-        }
-
         /// <summary>
         /// 将应用程序添加到防火墙例外
         /// </summary>
