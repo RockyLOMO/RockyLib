@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
-using SharpCompress.Archive;
+//using SharpCompress.Archive;
 using SharpCompress.Common;
 
 namespace System.Agent
@@ -283,76 +283,76 @@ namespace System.Agent
 
         private void RunProxifier()
         {
-            string zipPath = App.CombinePath("Proxifier PE.7z"), exePath = App.CombinePath("Proxifier.exe");
-            if (App.CreateFileFromResource("System.Agent.Resource.Proxifier PE.7z", zipPath) || !File.Exists(exePath))
-            {
-                var archive = ArchiveFactory.Open(zipPath);
-                int i = 0, count = archive.Entries.Count();
-                string destPath = App.CombinePath(string.Empty);
-                this.ShowForm(true);
-                foreach (var entry in archive.Entries)
-                {
-                    this.AppendLog("启动Proxifier: 复制{0}", entry.FilePath);
-                    if (!entry.IsDirectory)
-                    {
-                        entry.WriteToDirectory(destPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
-                    }
-                    pb_b.Value = ++i * 100 / count;
-                }
-                this.HideForm();
-            }
-            if (_proxifierProc == null || _proxifierProc.HasExited)
-            {
-                _proxifierProc = Process.Start(exePath);
-            }
-            ConsoleNotify.ShowWindow(_proxifierProc.MainWindowHandle, true);
+            //string zipPath = App.CombinePath("Proxifier PE.7z"), exePath = App.CombinePath("Proxifier.exe");
+            //if (App.CreateFileFromResource("System.Agent.Resource.Proxifier PE.7z", zipPath) || !File.Exists(exePath))
+            //{
+            //    var archive = ArchiveFactory.Open(zipPath);
+            //    int i = 0, count = archive.Entries.Count();
+            //    string destPath = App.CombinePath(string.Empty);
+            //    this.ShowForm(true);
+            //    foreach (var entry in archive.Entries)
+            //    {
+            //        this.AppendLog("启动Proxifier: 复制{0}", entry.FilePath);
+            //        if (!entry.IsDirectory)
+            //        {
+            //            entry.WriteToDirectory(destPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+            //        }
+            //        pb_b.Value = ++i * 100 / count;
+            //    }
+            //    this.HideForm();
+            //}
+            //if (_proxifierProc == null || _proxifierProc.HasExited)
+            //{
+            //    _proxifierProc = Process.Start(exePath);
+            //}
+            //ConsoleNotify.ShowWindow(_proxifierProc.MainWindowHandle, true);
         }
 
         private void RunPrivacyService()
         {
-            lock (_pipeServer)
-            {
-                string destPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Privacy Service\");
-                App.CreateDirectory(destPath);
-                string zipPath = Path.Combine(destPath, "PrivacyService.7z");
+            //lock (_pipeServer)
+            //{
+            //    string destPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Privacy Service\");
+            //    App.CreateDirectory(destPath);
+            //    string zipPath = Path.Combine(destPath, "PrivacyService.7z");
 
-                var client = new HttpClient(new Uri("http://azure.xineapp.com/xAgent/PrivacyService.7z"));
-                client.DownloadFile(zipPath);
+            //    var client = new HttpClient(new Uri("http://azure.xineapp.com/xAgent/PrivacyService.7z"));
+            //    client.DownloadFile(zipPath);
 
-                try
-                {
-                    var sc = new System.ServiceProcess.ServiceController("PrivacyService");
-                    if (sc.Status != System.ServiceProcess.ServiceControllerStatus.Stopped)
-                    {
-                        sc.Stop();
-                    }
-                }
-                catch (InvalidOperationException ex)
-                {
-                    App.LogError(ex, "SvcStop");
-                }
-                //先停止否则无法覆盖
-                var archive = ArchiveFactory.Open(zipPath);
-                foreach (var entry in archive.Entries)
-                {
-                    entry.WriteToDirectory(destPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
-                }
-                System.Agent.Privacy.ProtocolClient.LockExe();
+            //    try
+            //    {
+            //        var sc = new System.ServiceProcess.ServiceController("PrivacyService");
+            //        if (sc.Status != System.ServiceProcess.ServiceControllerStatus.Stopped)
+            //        {
+            //            sc.Stop();
+            //        }
+            //    }
+            //    catch (InvalidOperationException ex)
+            //    {
+            //        App.LogError(ex, "SvcStop");
+            //    }
+            //    //先停止否则无法覆盖
+            //    var archive = ArchiveFactory.Open(zipPath);
+            //    foreach (var entry in archive.Entries)
+            //    {
+            //        entry.WriteToDirectory(destPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+            //    }
+            //    System.Agent.Privacy.ProtocolClient.LockExe();
 
-                var proc = new Process();
-                proc.StartInfo.FileName = "cmd.exe";
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardError = true;
-                //proc.StartInfo.CreateNoWindow = true;
-                proc.StartInfo.WorkingDirectory = @"C:\Windows\Microsoft.NET\Framework\v4.0.30319\";
-                proc.Start();
-                proc.StandardInput.WriteLine(string.Format(@"InstallUtil.exe /u ""{0}System.Agent.WinService.exe""", destPath));
-                proc.StandardInput.WriteLine(string.Format(@"InstallUtil.exe ""{0}System.Agent.WinService.exe""", destPath));
-                proc.StandardInput.WriteLine("exit");
-                //proc.WaitForExit();
-            }
+            //    var proc = new Process();
+            //    proc.StartInfo.FileName = "cmd.exe";
+            //    proc.StartInfo.UseShellExecute = false;
+            //    proc.StartInfo.RedirectStandardInput = true;
+            //    proc.StartInfo.RedirectStandardOutput = true;
+            //    proc.StartInfo.RedirectStandardError = true;
+            //    //proc.StartInfo.CreateNoWindow = true;
+            //    proc.StartInfo.WorkingDirectory = @"C:\Windows\Microsoft.NET\Framework\v4.0.30319\";
+            //    proc.Start();
+            //    proc.StandardInput.WriteLine(string.Format(@"InstallUtil.exe /u ""{0}System.Agent.WinService.exe""", destPath));
+            //    proc.StandardInput.WriteLine(string.Format(@"InstallUtil.exe ""{0}System.Agent.WinService.exe""", destPath));
+            //    proc.StandardInput.WriteLine("exit");
+            //    //proc.WaitForExit();
+            //}
         }
         #endregion
     }

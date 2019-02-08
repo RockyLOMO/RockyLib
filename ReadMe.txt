@@ -19,4 +19,3 @@
 
 4. 
   a. Https反向连接获取问题；
-  b. https://github.com/MSOpenTech/redis;
